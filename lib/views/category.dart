@@ -4,17 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart'as http;
 import 'package:wallpaper_app/data/data.dart';
 import 'package:wallpaper_app/model/wallpaper_model.dart';
+import 'package:wallpaper_app/widgets/widget.dart';
 
 class Categorie extends StatefulWidget {
+  final String categorieName;
+  Categorie({this.categorieName});
+
   @override
   _CategorieState createState() => _CategorieState();
 }
 
 class _CategorieState extends State<Categorie> {
   List<WallpaperModel> wallpapers = new List();
-  getTrendingWallpapers()async
+  getSearchWallpapers(String query)async
   {
-    var response =await http.get("https://api.pexels.com/v1/curated",
+    var response =await http.get("https://api.pexels.com/v1/search?query=$query&per_page=30&page=1",
         headers: {
           "Authorization" : apiKey});
 
@@ -39,11 +43,27 @@ class _CategorieState extends State<Categorie> {
 
   @override
   void initState() {
-    // TODO: implement initState
+     getSearchWallpapers(widget.categorieName);
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar:  AppBar(
+        title: brandName(),
+        elevation: 0.0,
+      ),
+      body: SingleChildScrollView(
+        child:  Container(
+          child: Column(
+            children: [
+
+              SizedBox(height: 16.0,),
+              wallpaperList(wallpapers: wallpapers , context: context),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
